@@ -36,10 +36,6 @@ Servo motor_right;
 Servo motor_task;
 Servo servo_task;
 
-#define TANK_MODE 0
-#define ARCADE_MODE 1
-int mode = TANK_MODE;
-
 bool prev_start_button = false;
 
 void setup() {
@@ -66,28 +62,13 @@ void loop() {
 
   // If the start button was pressed, switch control mode
   bool start_button_pressed = gizmo.getButton(GIZMO_BUTTON_START);
-  if (start_button_pressed && !prev_start_button) {
-    if (mode == TANK_MODE) {
-      mode = ARCADE_MODE;
-    }
-    else if (mode == ARCADE_MODE) {
-      mode = TANK_MODE;
-    }
-  }
   prev_start_button = start_button_pressed;
 
-  if (mode == TANK_MODE) {
-    // Convert gamepad axis positions (0 - 255) to motor speeds (0 - 180)
-    motor_left.write(map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, 0, 180));
-    motor_right.write(map(gizmo.getAxis(GIZMO_AXIS_RY), 0, 255, 0, 180));
-  }
-  else if (mode == ARCADE_MODE) {
-    // Mix left joystick axes to control both wheels
-    int speed = map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, -90, 90);
-    int steering = map(gizmo.getAxis(GIZMO_AXIS_LX), 0, 255, -90, 90);
-    motor_left.write(constrain(speed - steering, -90, 90) + 90);
-    motor_right.write(constrain(speed + steering, -90, 90) + 90);
-  }
+
+  int speed = map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, -90, 90);
+  int steering = map(gizmo.getAxis(GIZMO_AXIS_LX), 0, 255, -90, 90);
+  motor_left.write(constrain(speed - steering, -90, 90) + 90);
+  motor_right.write(constrain(speed + steering, -90, 90) + 90);
 
   // Control task motor with right trigger / shoulder button
   if (gizmo.getButton(GIZMO_BUTTON_RT)) {
