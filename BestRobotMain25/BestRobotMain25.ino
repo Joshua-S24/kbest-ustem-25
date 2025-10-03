@@ -1,15 +1,46 @@
 /*
-This is the default BEST Robotics program for the Gizmo.
-This program offers remote control of simple robots using 3 motors and a servo.
-This may serve as a useful starting point for your team's competition code. You
-will almost certainly need to edit or extend this code to meet your needs.
 
-This code has two control modes: 'Tank Mode' and 'Arcade Mode'. The Start
-button on your gamepad switches the robot between the two modes.
+Total Functions Needed:
+  - Large Left Motor (Left Wheel):
+    - Forward
+    - Backward
+  - Large Right Motor (Right Wheel):
+    - Forward
+    - Backward
+  - Small Motor 1 (Task unknown):
+    - Clockwise
+    - Counterclockwise
+  - Small Motor 2 (Task unknown):
+      - Clockwise
+      - Counterclockwise
+  - Autonomous Factoid Check (1 button)
+  - Cancel all auto functions (1 button)
 
-Here are the controls for Tank Mode:
-Left Joystick Up/Down    - Motor 1 Fwd/Rev
-Right Joystick Up/Down   - Motor 3 Fwd/Rev
+General Notes:
+May need a special state for either:
+  - Performing any auto func
+  - Performing a particular auto func (one state (enum) for each)
+
+
+Left Joystick Up/Down - Left Motor Fwd/Rev
+Right Joystick Up/Down - Right Motor Fwd/Rev
+
+A Button - Check Weight + Cancel
+
+Unused Buttons:
+Left Joystick Left/Right
+Left Joystick Button
+Right Joystick Left/Right
+Right Joystick Button
+Back Button
+Start Button
+X Button
+Y Button
+B Button
+
+
+[DISREGARD BELOW CONTROLS FOR NOW]
+
 
 Here are the controls for Arcade Mode:
 Left Joystick Up/Down    - Robot Fwd/Rev
@@ -38,6 +69,14 @@ Servo servo_task;
 
 bool prev_start_button = false;
 
+// state enums
+#define ACTIVE 0
+#define CHECKING_WEIGHT 1
+#define PLACEHOLDER 2
+
+int state = ACTIVE;
+
+
 void setup() {
   gizmo.begin();
 
@@ -52,6 +91,8 @@ void setup() {
 }
 
 void loop() {
+  // INITIAL CHECK-UP
+
   /* Toggle the built-in LED each time through the loop so we can see
    * that the program really is running.
    */
@@ -64,31 +105,41 @@ void loop() {
   bool start_button_pressed = gizmo.getButton(GIZMO_BUTTON_START);
   prev_start_button = start_button_pressed;
 
+  // CHECK-UP END
 
-  int speed = map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, -90, 90);
-  int steering = map(gizmo.getAxis(GIZMO_AXIS_LX), 0, 255, -90, 90);
-  motor_left.write(constrain(speed - steering, -90, 90) + 90);
-  motor_right.write(constrain(speed + steering, -90, 90) + 90);
+  if (mode == ACTIVE){ // ACTIVE STATE BEGIN
+    // Convert gamepad axis positions (0 - 255) to motor speeds (0 - 180)
+    motor_left.write(map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, 0, 180));
+    motor_right.write(map(gizmo.getAxis(GIZMO_AXIS_RY), 0, 255, 0, 180));
 
-  // Control task motor with right trigger / shoulder button
-  if (gizmo.getButton(GIZMO_BUTTON_RT)) {
-    motor_task.write(0);
-  }
-  else if (gizmo.getButton(GIZMO_BUTTON_RSHOULDER)) {
-    motor_task.write(180);
-  }
-  else {
-    motor_task.write(90);
-  }
+    // All non-wheel motors must be set at (0, 90, or 180)
+    // 0 = down, 90 = default, 180 = up
 
-  // Control task servo with left trigger / shoulder button
-  if (gizmo.getButton(GIZMO_BUTTON_LT)) {
-    servo_task.write(0);
-  }
-  else if (gizmo.getButton(GIZMO_BUTTON_LSHOULDER)) {
-    servo_task.write(180);
-  }
-  else {
-    servo_task.write(90);
-  }
+    // Control task motor with right trigger / shoulder button
+    if (gizmo.getButton(GIZMO_BUTTON_RT)) {
+      motor_task.write(0);
+    }
+    else if (gizmo.getButton(GIZMO_BUTTON_RSHOULDER)) {
+      motor_task.write(180);
+    }
+    else {
+      motor_task.write(90);
+    }
+
+    // Control task servo with left trigger / shoulder button
+    if (gizmo.getButton(GIZMO_BUTTON_LT)) {
+      servo_task.write(0);
+    }
+    else if (gizmo.getButton(GIZMO_BUTTON_LSHOULDER)) {
+      servo_task.write(180);
+    }
+    else {
+      servo_task.write(90);
+      } 
+    
+    // ACTIVE STATE END
+  } else if (mode == CHECKING_WEIGHT){ // WEIGHT CHECKING STATE BEGIN
+      continue
+      // WEIGHT CHECK END
+    }
 }
