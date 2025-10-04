@@ -11,8 +11,14 @@ Total Functions Needed:
     - Clockwise
     - Counterclockwise
   - Small Motor 2 (Task unknown):
-      - Clockwise
-      - Counterclockwise
+    - Clockwise
+    - Counterclockwise
+  - Servo 1 (Task unknown):
+    - Clockwise
+    - Counterclockwise
+  - Servo 2 (Task unknown):
+    - Clockwise
+    - Counterclockwise
   - Autonomous Factoid Check (1 button)
   - Cancel all auto functions (1 button)
 
@@ -21,6 +27,8 @@ May need a special state for either:
   - Performing any auto func
   - Performing a particular auto func (one state (enum) for each)
 
+
+[CONTROLS] (WIP)
 
 Left Joystick Up/Down - Left Motor Fwd/Rev
 Right Joystick Up/Down - Right Motor Fwd/Rev
@@ -81,6 +89,10 @@ void setup() {
   gizmo.begin();
 
   // Configure the motors & servos for the ports they are connected to
+
+  // Available Motor Ports 1-4
+  // Available Servo Ports 1-4
+
   motor_left.attach(GIZMO_MOTOR_1);
   motor_right.attach(GIZMO_MOTOR_3);
   motor_task.attach(GIZMO_MOTOR_4);
@@ -107,12 +119,12 @@ void loop() {
 
   // CHECK-UP END
 
-  if (mode == ACTIVE){ // ACTIVE STATE BEGIN
+  if (state == ACTIVE){ // ACTIVE STATE BEGIN
     // Convert gamepad axis positions (0 - 255) to motor speeds (0 - 180)
-    motor_left.write(map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, 0, 180));
+    motor_left.write(map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, 180, 0)); //flipped
     motor_right.write(map(gizmo.getAxis(GIZMO_AXIS_RY), 0, 255, 0, 180));
 
-    // All non-wheel motors must be set at (0, 90, or 180)
+    // !! All non-wheel motors must be set at (0, 90, or 180)
     // 0 = down, 90 = default, 180 = up
 
     // Control task motor with right trigger / shoulder button
@@ -138,8 +150,11 @@ void loop() {
       } 
     
     // ACTIVE STATE END
-  } else if (mode == CHECKING_WEIGHT){ // WEIGHT CHECKING STATE BEGIN
-      continue
+  } else if (state == CHECKING_WEIGHT){ // WEIGHT CHECKING STATE BEGIN
+      // write a low value (max 90) for the motor speed
+      // keep this speed for 3 or less seconds
+      // if the button is pressed again, restore control by setting mode to ACTIVE
+      
       // WEIGHT CHECK END
     }
 }
