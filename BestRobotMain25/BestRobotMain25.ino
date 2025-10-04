@@ -23,10 +23,27 @@ Total Functions Needed:
   - Cancel all auto functions (1 button)
 
 General Notes:
+
 May need a special state for either:
   - Performing any auto func
   - Performing a particular auto func (one state (enum) for each)
 
+Controller oddities:
+  Motor output range: 0-180 (stops at 90)
+  Servo output range: 0-180
+  Joystick X-axis output range: 0-254
+    - 0, 127, and 254 represent the max left, center, and max right, respectively
+  Joystick Y-axis output range: 0-254
+    - 0, 127, and 254 represent the max top, center, and max down, respectively
+  Joystick triggers are digital when using DirectInput and analog when using XInput
+  Logitech button does not work with DirectInput
+  Mode button should NEVER be touched
+  D-Pad buttons are analog in DirectInput and are treated as an axis (or joystick), not as 4 buttons
+  D-Pad X-axis output range: 0-254
+    - 0, 127, and 254 represent the max left, center, and max right, respectively
+  D-Pad Y-axis output range: 0-254
+    - 0, 127, and 254 represent the max top, center, and max down, respectively
+  D-Pad's middle press function is apparently unknown
 
 [CONTROLS] (WIP)
 
