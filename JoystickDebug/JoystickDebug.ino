@@ -1,4 +1,6 @@
 #include "Gizmo.h"
+NEW SKETCH
+
 
 // The Gizmo provides access to the data that is held by the field
 // management system and the gizmo system processor.

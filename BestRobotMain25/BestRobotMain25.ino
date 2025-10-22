@@ -90,7 +90,7 @@ Gizmo gizmo;
 Servo motor_left;
 Servo motor_right;
 
-Servo motor_task;
+Servo motor_arm;
 Servo servo_task;
 
 bool prev_start_button = false;
@@ -106,6 +106,7 @@ int state = ACTIVE;
 void setup() {
   gizmo.begin();
 
+
   // Configure the motors & servos for the ports they are connected to
 
   // Available Motor Ports 1-4
@@ -113,7 +114,7 @@ void setup() {
 
   motor_left.attach(GIZMO_MOTOR_1);
   motor_right.attach(GIZMO_MOTOR_3);
-  motor_task.attach(GIZMO_MOTOR_4);
+  motor_arm.attach(GIZMO_MOTOR_4);
   servo_task.attach(GIZMO_SERVO_1);
 
   // Configure the built-in LED pin as an output
@@ -147,13 +148,13 @@ void loop() {
 
     // Control task motor with right trigger / shoulder button
     if (gizmo.getButton(GIZMO_BUTTON_RT)) {
-      motor_task.write(0);
+      motor_arm.write(0);
     }
     else if (gizmo.getButton(GIZMO_BUTTON_RSHOULDER)) {
-      motor_task.write(180);
+      motor_arm.write(180);
     }
     else {
-      motor_task.write(90);
+      motor_arm.write(90);
     }
 
     // Control task servo with left trigger / shoulder button
@@ -165,7 +166,9 @@ void loop() {
     }
     else {
       servo_task.write(90);
-      } 
+    } 
+
+    
     
     // ACTIVE STATE END
   } else if (state == CHECKING_WEIGHT){ // WEIGHT CHECKING STATE BEGIN
