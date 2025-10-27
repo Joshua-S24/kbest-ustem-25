@@ -99,7 +99,10 @@ bool prev_start_button = false;
 #define ACTIVE 0
 #define CHECKING_WEIGHT 1
 #define OBSTACLE_DETECTED 2
-
+int IRlevel;
+unsigned long cooldownTime;
+unsigned long detectedTime;
+bool IRcoolDown = false;
 int state = ACTIVE;
 
 
@@ -166,7 +169,11 @@ void loop() {
     }
     else {
       servo_task.write(90);
-    } 
+    }
+
+    if (IRlevel >= 200 && IRcoolDown){
+      state = OBSTACLE_DETECTED;
+    }
     
     
     // ACTIVE STATE END
@@ -184,7 +191,14 @@ void loop() {
       // returns to beginning of loop
       // includes a cool down period for about at least 0.5 second
       // uses a bool variable to check the cool down state
-
+      // note: add deceleration later
+      if (detectedTime >= 3000){
+        motor_left.write(90);
+        motor_right.write(90);
+      } else{
+        state == ACTIVE;
+      }
+      
       // OBSTACLE_DETECTED STATE END
     }
 }
