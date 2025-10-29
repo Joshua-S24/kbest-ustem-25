@@ -1,7 +1,7 @@
 #include <Gizmo.h>
 #include <Servo.h>
 
-Gizmo gizmo
+Gizmo gizmo;
 
 Servo motor_left;
 Servo motor_right;
