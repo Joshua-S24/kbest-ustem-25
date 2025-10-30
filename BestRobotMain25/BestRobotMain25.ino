@@ -84,6 +84,7 @@ go to 45 degrees.
 
 #include <Gizmo.h>
 #include <Servo.h>
+#include <AsyncTimer.h>
 
 Gizmo gizmo;
 
