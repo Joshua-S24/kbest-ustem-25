@@ -1,7 +1,7 @@
 #pragma config(Motor,  port2,           rightMotor,    tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port3,           leftMotor,     tmotorServoContinuousRotation, openLoop, reversed)
 #pragma config(Motor,  port6,           armMotor,      tmotorServoContinuousRotation, openLoop)
-#pragma config(Motor,  port7,           slideMotor,    tmotorServoContinuousRotation, openLoop)
+#pragma config(Motor,  port7,           baseMotor,    tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port8,           Gripservo,     tmotorServoStandard, openLoop)
 #pragma config(Motor,  port9,           Basketservo,   tmotorServoStandard, openLoop)
 
@@ -41,11 +41,11 @@ task main()
 	    motor[rightMotor] = vexRT[Ch3] / 1.5;
 
 	    // Arm Control
-			if(vexRT[Btn5U] == 1)       	//If button 5U is pressed...
+			if(vexRT[Btn7U] == 1)       	//If button 5U is pressed...
 			{
 				motor[armMotor] = 127;    	//...raise the arm.
 			}
-			else if(vexRT[Btn5D] == 1)  	//Else, if button 5D is pressed...
+			else if(vexRT[Btn7D] == 1)  	//Else, if button 5D is pressed...
 			{
 				motor[armMotor] = -127;   	//...lower the arm.
 			}
@@ -54,19 +54,20 @@ task main()
 				motor[armMotor] = 0;      	//...stop the arm.
 			}
 
-	    // Open, close or do not move gripper
-			if(vexRT[Btn7U] == 1)       	//If Button 7U is pressed...
+	    // Open, close or do not move base
+			if(vexRT[Btn7L] == 1)
 			{
-				motor[Gripservo] = 127;  		//...close the gripper.
+				motor[baseMotor] = 127;
 			}
-			else if(vexRT[Btn7D] == 1)  	//Else, if button 7D is pressed...
+			else if(vexRT[Btn7R] == 1)
 			{
-				motor[Gripservo] = -127; 		//...open the gripper.
+				motor[baseMotor] = -127;
 			}
-			else                      		//Else (neither button is pressed)...
+			else
 			{
-				motor[Gripservo] = 0;    		//...stop the gripper.
+				motor[baseMotor] = 0;
 			}
+
 
 	    // Open, close or do not move basket
 			if(vexRT[Btn8U] == 1)       	//If Button 8U is pressed...
@@ -82,19 +83,6 @@ task main()
 				motor[Basketservo] = 0;    		//...stop the basket.
 			}
 
-				//Slider Control
-	    if(vexRT[Btn6U] == 1)
-	    {
-	      motor[armMotor] = 200;
-	    }
-	    else if(vexRT[Btn6D] == 1)
-	    {
-	      motor[armMotor] = -200;
-	    }
-	    else
-	    {
-	      motor[armMotor] = 0;
-	    }
 
 	    // IR CHECK (account for timer 3)
 

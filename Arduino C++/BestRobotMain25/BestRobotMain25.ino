@@ -88,22 +88,27 @@ go to 45 degrees.
 
 Gizmo gizmo;
 
+// Motors (Continuous Rotation Servos)
 Servo motor_left;
 Servo motor_right;
-
 Servo motor_arm;
-Servo servo_task;
+Servo motor_base;
 
-bool prev_start_button = false;
+// Servos
+Servo servo_grip;
+Servo servo_wrist;
+
 
 // state enums
 #define ACTIVE 0
 #define CHECKING_WEIGHT 1
 #define OBSTACLE_DETECTED 2
+
+// Variables
 int IRlevel;
 unsigned long cooldownTime;
 unsigned long detectedTime;
-bool IRcoolDown = false;
+bool IRCooldown = false;
 int state = ACTIVE;
 
 
@@ -112,16 +117,14 @@ void setup() {
 
 
   // Configure the motors & servos for the ports they are connected to
-
-  // Available Motor Ports 1-4
-  // Available Servo Ports 1-4
-
   motor_left.attach(GIZMO_MOTOR_1);
-  motor_right.attach(GIZMO_MOTOR_3);
+  motor_right.attach(GIZMO_MOTOR_2);
+  motor_base.attach(GIZMO_MOTOR_3);
   motor_arm.attach(GIZMO_MOTOR_4);
-  servo_task.attach(GIZMO_SERVO_1);
+  servo_grip.attach(GIZMO_SERVO_1);
+  servo_wrist.attach(GIZMO_SERVO_2);
 
-  // Configure the built-in LED pin as an output
+  // Configure the built-in LED pin as an output (User Processor)
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
@@ -150,28 +153,24 @@ void loop() {
     // !! All non-wheel motors must be set at (0, 90, or 180)
     // 0 = down, 90 = default, 180 = up
 
-    // Control task motor with right trigger / shoulder button
-    if (gizmo.getButton(GIZMO_BUTTON_RT)) {
-      motor_arm.write(0);
-    }
-    else if (gizmo.getButton(GIZMO_BUTTON_RSHOULDER)) {
-      motor_arm.write(180);
-    }
-    else {
-      motor_arm.write(90);
-    }
+    // Control base motor with left and right of D-pad
+    motor_base.write(map(gizmo.getAxis(GIZMO_AXIS_DX), 0, 255, 180, 0));
+
+    // Control arm motor with top and bottom of D-Pad
+    motor_arm.write(map(gizmo.getAxis(GIZMO_AXIS_DY), 0, 255, 180, 0));
 
     // Control task servo with left trigger / shoulder button
-    if (gizmo.getButton(GIZMO_BUTTON_LT)) {
-      servo_task.write(0);
+    // Directions subject to change
+    // The servo is meant to be able to be toggled (hence the lack of else if statements)
+    if (gizmo.getButton(GIZMO_BUTTON_LSHOULDER)) {
+      servo_wrist.write(180);
     }
-    else if (gizmo.getButton(GIZMO_BUTTON_LSHOULDER)) {
-      servo_task.write(180);
-    }
-    else {
-      servo_task.write(90);
+    if (gizmo.getButton(GIZMO_BUTTON_RSHOULDER)) {
+      servo_wrist.write(90);
     }
 
+
+    // Obstacle Check
     if (IRlevel >= 200 && IRcoolDown){
       state = OBSTACLE_DETECTED;
     }
