@@ -5,18 +5,36 @@
 #pragma config(Motor,  port8,           Gripservo,     tmotorServoStandard, openLoop)
 #pragma config(Motor,  port9,           Basketservo,   tmotorServoStandard, openLoop)
 
-typedef enum{
+
+/*
+Current timer config:
+	Timer 1:
+	Timer 2:
+	Timer 3: Obstacle Detected
+	Timer 4: Obstacle Detection Cooldown
+*/
+
+int IRValue = 0;
+
+enum RobotState{
 		ACTIVE = 0,
 		OBSTACLE_DETECTED = 1,
 		CHECKING_WEIGHT = 2,
-	} RobotState;
+	};
+
+
+void move(int speed) //range (-180 to 180)
+{
+	motor[leftMotor] = speed;
+	motor[rightMotor] = speed; //flip one of these probably
+}
 
 task main()
 {
-
-
 	RobotState currentState = ACTIVE;
-  while(1 == 1)
+
+
+	while(1 == 1)
   {
   	if (currentState == ACTIVE){
   		motor[leftMotor] = vexRT[Ch2] / 1.5; // todo: why divide by 1.5 (or multiply by 2/3)
@@ -77,10 +95,25 @@ task main()
 	    {
 	      motor[armMotor] = 0;
 	    }
+
+	    // IR CHECK (account for timer 3)
+
   	}
-    //Driving Motor Control
+    else if(currentState == OBSTACLE_DETECTED){
+    	// add a timer
+    	clearTimer(T3);
+    	while(time1[T3] < 3000)
+    	{
+    		move(30);
+    		// add a cancel button that breaks the loop
+    	}
+    	currentState = ACTIVE;
+
+    	// start timer 4
+    	clearTimer(T4);
+    }
 
 
-  }
-}
+  } // while loop end
+} // main end
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

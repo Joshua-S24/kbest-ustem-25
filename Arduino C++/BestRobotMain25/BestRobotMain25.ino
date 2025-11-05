@@ -84,6 +84,7 @@ go to 45 degrees.
 
 #include <Gizmo.h>
 #include <Servo.h>
+#include <AsyncTimer.h>
 
 Gizmo gizmo;
 
@@ -98,8 +99,11 @@ bool prev_start_button = false;
 // state enums
 #define ACTIVE 0
 #define CHECKING_WEIGHT 1
-#define PLACEHOLDER 2
-
+#define OBSTACLE_DETECTED 2
+int IRlevel;
+unsigned long cooldownTime;
+unsigned long detectedTime;
+bool IRcoolDown = false;
 int state = ACTIVE;
 
 
@@ -166,8 +170,11 @@ void loop() {
     }
     else {
       servo_task.write(90);
-    } 
+    }
 
+    if (IRlevel >= 200 && IRcoolDown){
+      state = OBSTACLE_DETECTED;
+    }
     
     
     // ACTIVE STATE END
@@ -177,5 +184,22 @@ void loop() {
       // if the button is pressed again, restore control by setting mode to ACTIVE
       
       // WEIGHT CHECK END
+    }
+    else if (state == OBSTACLE_DETECTED){ // OBSTACLE_DETECTED STATE BEGIN
+      // if IR sensor outputs reaches a high integer number
+      // stops robot (motor speed = 0) - takes control from operator
+      // takes control for at least 0.5 seconds
+      // returns to beginning of loop
+      // includes a cool down period for about at least 0.5 second
+      // uses a bool variable to check the cool down state
+      // note: add deceleration later
+      if (detectedTime >= 3000){
+        motor_left.write(90);
+        motor_right.write(90);
+      } else{
+        state == ACTIVE;
+      }
+      
+      // OBSTACLE_DETECTED STATE END
     }
 }
