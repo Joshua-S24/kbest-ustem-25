@@ -97,7 +97,8 @@ Servo motor_base;
 // Servos
 Servo servo_grip;
 Servo servo_wrist;
-
+Servo temp_servo1;
+Servo temp_servo2;
 
 // state enums
 #define ACTIVE 0
@@ -123,6 +124,8 @@ void setup() {
   motor_arm.attach(GIZMO_MOTOR_4);
   servo_grip.attach(GIZMO_SERVO_1);
   servo_wrist.attach(GIZMO_SERVO_2);
+  temp_servo1.attach(GIZMO_SERVO_3);
+  temp_servo2.attach(GIZMO_SERVO_4);
 
   // Configure the built-in LED pin as an output (User Processor)
   pinMode(LED_BUILTIN, OUTPUT);
@@ -139,9 +142,6 @@ void loop() {
   // Refreshes the information about axis and button states
   gizmo.refresh();
 
-  // If the start button was pressed, switch control mode
-  bool start_button_pressed = gizmo.getButton(GIZMO_BUTTON_START);
-  prev_start_button = start_button_pressed;
 
   // CHECK-UP END
 
@@ -159,19 +159,27 @@ void loop() {
     // Control arm motor with top and bottom of D-Pad
     motor_arm.write(map(gizmo.getAxis(GIZMO_AXIS_DY), 0, 255, 180, 0));
 
+    Serial.printf("Left Axis: %i Right Axis: %i Base: %i Arm: %i ",
+                  map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, 180, 0),
+                  map(gizmo.getAxis(GIZMO_AXIS_RY), 0, 255, 0, 180),
+                  map(gizmo.getAxis(GIZMO_AXIS_DX), 0, 255, 180, 0),
+                  map(gizmo.getAxis(GIZMO_AXIS_DY), 0, 255, 180, 0));
+    
     // Control task servo with left trigger / shoulder button
     // Directions subject to change
     // The servo is meant to be able to be toggled (hence the lack of else if statements)
     if (gizmo.getButton(GIZMO_BUTTON_LSHOULDER)) {
       servo_wrist.write(180);
+      Serial.println("LSHOULDER");
     }
     if (gizmo.getButton(GIZMO_BUTTON_RSHOULDER)) {
       servo_wrist.write(90);
+      Serial.println("RSHOULDER");
     }
-
+    Serial.println();
 
     // Obstacle Check
-    if (IRlevel >= 200 && IRcoolDown){
+    if (IRlevel >= 200 && IRCooldown){
       state = OBSTACLE_DETECTED;
     }
     
