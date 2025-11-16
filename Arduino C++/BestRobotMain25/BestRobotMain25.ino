@@ -84,7 +84,7 @@ go to 45 degrees.
 
 #include <Gizmo.h>
 #include <Servo.h>
-#include <AsyncTimer.h>
+//#include <AsyncTimer.h> // unused
 
 Gizmo gizmo;
 
@@ -96,7 +96,7 @@ Servo motor_base;
 
 // Servos
 Servo servo_grip;
-Servo servo_wrist;
+Servo servo_key;
 Servo temp_servo1;
 Servo temp_servo2;
 
@@ -106,11 +106,17 @@ Servo temp_servo2;
 #define OBSTACLE_DETECTED 2
 
 // Variables
+int state = ACTIVE;
+int keyAngle = 0;
+bool reverseControls = false;
+bool gripping = false;
+
+// Deprecated Variables
 int IRlevel;
 unsigned long cooldownTime;
 unsigned long detectedTime;
 bool IRCooldown = false;
-int state = ACTIVE;
+
 
 
 void setup() {
@@ -123,7 +129,7 @@ void setup() {
   motor_base.attach(GIZMO_MOTOR_3);
   motor_arm.attach(GIZMO_MOTOR_4);
   servo_grip.attach(GIZMO_SERVO_1);
-  servo_wrist.attach(GIZMO_SERVO_2);
+  servo_key.attach(GIZMO_SERVO_2);
   temp_servo1.attach(GIZMO_SERVO_3);
   temp_servo2.attach(GIZMO_SERVO_4);
 
@@ -147,8 +153,19 @@ void loop() {
 
   if (state == ACTIVE){ // ACTIVE STATE BEGIN
     // Convert gamepad axis positions (0 - 255) to motor speeds (0 - 180)
-    motor_left.write(map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, 180, 0)); //flipped
-    motor_right.write(map(gizmo.getAxis(GIZMO_AXIS_RY), 0, 255, 0, 180));
+    if (!reverseControls){
+      motor_left.write(map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, 180, 0)); //flipped
+      motor_right.write(map(gizmo.getAxis(GIZMO_AXIS_RY), 0, 255, 0, 180));
+    } else {
+      motor_left.write(map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, 0, 180));
+      motor_right.write(map(gizmo.getAxis(GIZMO_AXIS_RY), 0, 255, 180, 0));
+    }
+
+    if (reverseControls){
+      
+      
+    }
+    
 
     // !! All non-wheel motors must be set at (0, 90, or 180)
     // 0 = down, 90 = default, 180 = up
@@ -159,54 +176,53 @@ void loop() {
     // Control arm motor with top and bottom of D-Pad
     motor_arm.write(map(gizmo.getAxis(GIZMO_AXIS_DY), 0, 255, 180, 0));
 
+    if (gripping){
+      servo_grip.write(180);
+    } else {
+      servo_grip.write(0);
+    }
+
     Serial.printf("Left Axis: %i Right Axis: %i Base: %i Arm: %i ",
                   map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, 180, 0),
                   map(gizmo.getAxis(GIZMO_AXIS_RY), 0, 255, 0, 180),
                   map(gizmo.getAxis(GIZMO_AXIS_DX), 0, 255, 180, 0),
                   map(gizmo.getAxis(GIZMO_AXIS_DY), 0, 255, 180, 0));
-    
-    // Control task servo with left trigger / shoulder button
-    // Directions subject to change
-    // The servo is meant to be able to be toggled (hence the lack of else if statements)
-    if (gizmo.getButton(GIZMO_BUTTON_LSHOULDER)) {
-      servo_wrist.write(180);
-      Serial.println("LSHOULDER");
+ 
+    if (gizmo.getButton(GIZMO_BUTTON_A)){
+      gripping = !gripping;
+      Serial.println("Gripping: " + gripping);
     }
-    if (gizmo.getButton(GIZMO_BUTTON_RSHOULDER)) {
-      servo_wrist.write(90);
-      Serial.println("RSHOULDER");
-    }
-    Serial.println();
 
-    // Obstacle Check
-    if (IRlevel >= 200 && IRCooldown){
-      state = OBSTACLE_DETECTED;
+    if (gizmo.getButton(GIZMO_BUTTON_B)){
+      reverseControls = !reverseControls;
+      Serial.println("Reverse Controls: " + reverseControls);
     }
+
+    if (IRlevel >= 200 && IRCooldown){ // arbitrary IR threshold
+      // could be used for some IR-related functions, just not for obstacle detection
+      state = OBSTACLE_DETECTED; 
+    }
+
+  }
+  // ACTIVE STATE END 
     
-    
-    // ACTIVE STATE END
-  } else if (state == CHECKING_WEIGHT){ // WEIGHT CHECKING STATE BEGIN
-      // write a low value (max 90) for the motor speed
-      // keep this speed for 3 or less seconds
-      // if the button is pressed again, restore control by setting mode to ACTIVE
-      
-      // WEIGHT CHECK END
+  
+  else if (state == OBSTACLE_DETECTED){ // OBSTACLE_DETECTED STATE BEGIN
+    /* CURRENTLY DEPRECATED (will be kept in case new features need to be added)
+      if IR sensor outputs reaches a high integer number
+      stops robot (motor speed = 0) - takes control from operator
+      takes control for at least 0.5 seconds
+      returns to beginning of loop
+      includes a cool down period for about at least 0.5 second
+      uses a bool variable to check the cool down state
+      note: add deceleration later 
+    */
+    if (detectedTime >= 3000){
+      motor_left.write(90);
+      motor_right.write(90);
+    } else {
+      state == ACTIVE;
     }
-    else if (state == OBSTACLE_DETECTED){ // OBSTACLE_DETECTED STATE BEGIN
-      // if IR sensor outputs reaches a high integer number
-      // stops robot (motor speed = 0) - takes control from operator
-      // takes control for at least 0.5 seconds
-      // returns to beginning of loop
-      // includes a cool down period for about at least 0.5 second
-      // uses a bool variable to check the cool down state
-      // note: add deceleration later
-      if (detectedTime >= 3000){
-        motor_left.write(90);
-        motor_right.write(90);
-      } else{
-        state == ACTIVE;
-      }
-      
-      // OBSTACLE_DETECTED STATE END
-    }
+  }
+  // OBSTACLE_DETECTED STATE END
 }
