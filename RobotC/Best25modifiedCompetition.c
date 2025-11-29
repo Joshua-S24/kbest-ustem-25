@@ -40,14 +40,8 @@ task main()
 	while(1 == 1)
   {
   	if (currentState == ACTIVE){
-  		if (!reversed){
-  			motor[leftMotor] = vexRT[Ch2] / 1.5; // todo: why divide by 1.5 (or multiply by 2/3)
-	    	motor[rightMotor] = vexRT[Ch3] / 1.5;
-  		}
-  		else{
-  			motor[leftMotor] = -(vexRT[Ch2] / 1.5);
-	    	motor[rightMotor] = -(vexRT[Ch3] / 1.5);
-  		}
+  		motor[leftMotor] = (vexRT[Ch3] / 1.5); // todo: why divide by 1.5 (or multiply by 2/3)
+	    motor[rightMotor] = (vexRT[Ch2] / 1.5);
 
 
 	    // Arm Control
