@@ -1,0 +1,98 @@
+#include "vex.h"
+
+using namespace vex;
+
+bool reversed = false;
+
+void reverseToggle(){
+  reversed = !reversed;
+  Controller1.Screen.setCursor(3, 1);
+  Controller1.Screen.print("Reversed: %d", reversed);
+  
+  Controller1.rumble(".");
+  
+}
+
+// non-vital, used for extended testing purposes
+// while being conservative with callbacks
+void batteryCheck(){
+  Controller1.Screen.setCursor(2, 1);
+  Controller1.Screen.print("Battery: %d", Brain.Battery.capacity());
+}
+
+int main() {
+  // Initializing Robot Configuration. DO NOT REMOVE!
+  vexcodeInit();
+  // Begin project code
+  Controller1.ButtonY.pressed(reverseToggle);
+  Controller1.ButtonB.pressed(batteryCheck);
+  // Configure Arm and Base motor hold settings and velocity
+  ArmMotor.setStopping(hold);
+  BaseMotor.setStopping(hold);
+  ArmMotor.setVelocity(60, percent);
+  BaseMotor.setVelocity(30, percent);
+  
+  // Screen Printing
+  Controller1.Screen.clearScreen();
+  Controller1.Screen.setCursor(1, 1);
+  Controller1.Screen.print("Veritas Status");
+  Controller1.Screen.setCursor(2, 1);
+  Controller1.Screen.print("Battery: %d", Brain.Battery.capacity());
+  Controller1.Screen.setCursor(3, 1);
+  Controller1.Screen.print("Reversed: %d", reversed);
+
+  // Main Controller loop to set motors to controller Axis postiions
+  while (true) {
+    LeftMotor.setVelocity(Controller1.Axis3.position(), percent);
+    RightMotor.setVelocity(Controller1.Axis2.position(), percent);
+    if (!reversed){
+      LeftMotor.spin(forward);
+      RightMotor.spin(forward);
+    } else{
+      LeftMotor.spin(reverse);
+      RightMotor.spin(reverse);
+    }
+    
+    /*
+    if (Controller1.Axis3.position() != 0){
+      Controller1.Screen.print(Controller1.Axis3.position());
+    }
+    if (Controller1.Axis2.position() != 0){
+      Controller1.Screen.print(Controller1.Axis2.position());
+    }
+    */
+    
+
+    if(Controller1.ButtonDown.pressing()){
+      ArmMotor.spin(forward);
+    } else if (Controller1.ButtonUp.pressing()) {
+      ArmMotor.spin(reverse);
+    } else {
+      ArmMotor.stop();
+    }
+
+    if(Controller1.ButtonLeft.pressing()){
+      BaseMotor.spin(forward);
+    } else if (Controller1.ButtonRight.pressing()) {
+      BaseMotor.spin(reverse);
+    } else {
+      BaseMotor.stop();
+    }
+
+    if (Controller1.ButtonA.pressing()){
+      GripServo.setPosition(100, percent);
+    } else{
+      GripServo.setPosition(0, percent);
+    }
+
+    // for show
+    if (Controller1.ButtonR1.pressing()){
+      KeyServo.setPosition(180, degrees);
+    } else {
+      KeyServo.setPosition(0, degrees);
+    }
+    
+    //Controller1.Screen.clearLine(1);
+    wait(5, msec); // delay
+  }
+}
