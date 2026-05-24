@@ -1,11 +1,11 @@
 # Veritas
 
-!\[Veritas](https://github.com/Joshua-S24/kbest-ustem-25/blob/main/Photos/Veritas.JPG)
-
+<img src="https://github.com/Joshua-S24/kbest-ustem-25/blob/main/Photos/Veritas.JPG" width=50%>
 This is a public repository for the Kerr Engineering Club's 2025 Flagship Robot: Veritas. Veritas was built for the purpose of competing in the head-to-head competition in the Boosting Engineering Science and Technology (BEST) Robotics 2025 Competition: Factoids, where we competed in the Urban STEM hub.
 
 
 ## Gizmo + Arduino C++
+![Gizmo](https://github.com/Joshua-S24/kbest-ustem-25/blob/main/Photos/Gizmo_Testing_Small.jpg)
 
 The programming of Veritas first started with the Gizmo, the educational microcontroller that was provided by our hub. Because the Gizmo uses a Raspberry Pi Pico for student programming, we could have used either MicroPython or the Arduino IDE. Because we had programmed the Gizmo using the Arduino IDE in the last competition, it was best to continue using Arduino C++ to program Veritas.
 
@@ -17,13 +17,12 @@ The controls of the robot were arguably the most important task for the programm
 
 We were given a Logitech F310 wired joystick controller.
 
-!\[Logitech](https://github.com/Joshua-S24/kbest-ustem-25/blob/main/Photos/LogitechF130_Controller.jpg)
-
+<img src="https://github.com/Joshua-S24/kbest-ustem-25/blob/main/Photos/LogitechF130_Controller.jpg" width=25%>
 At one point, one of the shoulder buttons became faulty, which required some adjustments with the controls, although this didn't matter in the long run.
 
 #### Mobility
 
-Veritas had 4 wheels, with two motors being dedicated to the front drive wheels. The default code provided by BEST Robotics had an Arcade mode and a Tank mode for mobility. Arcade mode configured movement to the left joystick.
+Veritas had 4 wheels, with two motors dedicated to the front drive wheels. The default code provided by BEST Robotics had an Arcade mode and a Tank mode for mobility. Arcade mode configured the movement to the left joystick.
 
 **Arcade Mode Controls:**
 
@@ -57,10 +56,10 @@ The arm's movement was dedicated to the "D-Pad" of each controller, which was ot
 
 ### IR Sensing
 
-Because our hub provided an IR sensor, it was originally to be used for collision detection. There was originally code for a state machine that temporarily took control away from the operator to perform a corrective maneuver and prevent damage. This state machine would have also been the foundation for any autonomous actions that the robot could perform without the operator's input. However, the IR sensor was unused due to time constraints combined with a lack of priority, and Veritas did not have any features that would justify autonomous actions. To keep the program simple, the code was deprecated.
+Because our hub provided an infrared sensor, it was originally to be used for collision detection. There was originally code for a state machine that temporarily took control away from the operator to perform a corrective maneuver and prevent damage if it got too close to an obstacle. This state machine would have also been the foundation for any autonomous actions that the robot could perform without the operator's input. However, the IR sensor was unused due to time constraints combined with a lack of priority, and Veritas did not have any features that would justify autonomous actions. To keep the program simple, the code was deprecated.
 
 ## VEX Cortex + RobotC
-
+<img src="https://github.com/Joshua-S24/kbest-ustem-25/blob/main/Photos/VEX_Testing.JPG" width=50%>
 After an incident concerning the Gizmo, we were forced to use the VEX Cortex microcontroller instead. This also meant that the code written up until that point needed to be transferred over to RobotC. Because of our prior experience with RobotC, translating the movement controls from Arduino C++ to RobotC was not difficult. The code for the IR Sensor was also able to be transferred, but by this point, it was deprecated due to a lack of necessity. In its place, a new mode was created, inspired by the mode switch that the default code had.
 
 ### Controls
@@ -69,7 +68,7 @@ After an incident concerning the Gizmo, we were forced to use the VEX Cortex mic
 
 To use the VEX Cortex microcontroller, we needed a different controller: the VEXnet controller.
 
-!\[VEXnet](https://github.com/Joshua-S24/kbest-ustem-25/blob/main/Photos/VEXnet_Controller.jpg)
+<img src="https://github.com/Joshua-S24/kbest-ustem-25/blob/main/Photos/VEXnet_Controller.jpg" width=25%>
 
 The locations of the buttons mimicked the previous controller, so transferring the mobility controls was made even easier. Additionally, using wireless controls proved to be easier with this microcontroller, as it only required two VEXnet Keys.
 
@@ -82,8 +81,8 @@ As mentioned before, the controls were kept faithful to the previous version. On
 In the first version, the A button was meant to toggle the grip of the servo. Due to the nature of while loops, this did not work. Instead, this button was changed so that the operator had to hold the button to close the grip of the arm.
 
 ## VEX V5 + VEXcode V5
-
-Upon advancing to the State UIL competition, we were given a VEX V5 brain that needed to replace our current microcontroller, whether it was the Gizmo or the VEX Cortex. This microcontroller was undoubtedly an upgrade, as it contained more features, like new ports or the capability to store multiple scripts. Finally, the VEX V5 brain had its own IDE, which could be used on an online website or an offline app. This supported block-based coding, C++, and Python. Again, based on prior experience, C++ was chosen.
+<img src="https://github.com/Joshua-S24/kbest-ustem-25/blob/main/Photos/V5_Testing.jpg" width=50%>
+We placed 4th during the head-to-head competition, which led to our overall placement of 3rd for the district competition. Upon advancing to the Best of Texas Robotics competition in Dallas, we were given a VEX V5 brain that needed to replace our current microcontroller, whether it was the Gizmo or the VEX Cortex. This microcontroller was undoubtedly an upgrade, as it contained more features, like new ports or the capability to store multiple scripts. Finally, the VEX V5 brain had its own IDE, which could be used on an online website or an offline app. This supported block-based coding, C++, and Python. Again, based on prior experience, C++ was chosen.
 
 ### Controls
 
@@ -91,7 +90,7 @@ Upon advancing to the State UIL competition, we were given a VEX V5 brain that n
 
 The VEX V5 brain also came with a new controller.
 
-!\[VEXV5](https://github.com/Joshua-S24/kbest-ustem-25/blob/main/Photos/VEXV5_Controller.jpg)
+<img src="https://github.com/Joshua-S24/kbest-ustem-25/blob/main/Photos/VEXV5_Controller.jpg" width=25%>
 
 This controller was more modern than any of the previous controllers we've handled. The button layout itself was also similar to the previous controllers, meaning no dramatic change was necessary. Convenient features aside, the controller interface could be programmed and customized during run time. This meant that we had a way to display information. This feature was mainly used to give operators an indicator of whether reverse mode was toggled, which was previously impossible.
 
